@@ -1,0 +1,19 @@
+name: Claude Review
+on:
+  pull_request: { types: [opened, synchronize] }
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write      # OIDC, si usas federación
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "Revisa este PR buscando fallos de seguridad"
+          claude_args: |
+            --max-turns 10
+            --allowedTools "Read,Grep,Glob"
